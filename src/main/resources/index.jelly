@@ -1,0 +1,6 @@
+<?jelly escape-by-default='true'?>
+<div>
+    <a href="https://github.com/str4d/ed25519-java">EDDSA</a> api plugin for use by other Jenkins plugins.
+    <br/>
+    <em>Note:</em>Modern (&gt; 15) JDK variants natively support EdDSA signatures via JCE but some libraries still target JDK 11 and have a need of this library.
+</div>
