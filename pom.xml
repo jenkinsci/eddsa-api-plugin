@@ -32,13 +32,7 @@
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>net.i2p.crypto</groupId>
-      <artifactId>eddsa</artifactId>
-      <version>${revision}</version>
-    </dependency>
-  </dependencies>
+  <dependencies />
 
   <repositories>
     <repository>
