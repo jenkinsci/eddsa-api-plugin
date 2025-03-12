@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <Match>
+      <!-- Ignore checking for imported classes as we want to keep differences
+           as minimum as possible -->
+<!--      <Package name="~net\.i2p\.crypto.eddsa\.*"/>-->
+
+    <Class name="~net\.i2p\.crypto\.eddsa.*" />
+
+  </Match>
+
+</FindBugsFilter>

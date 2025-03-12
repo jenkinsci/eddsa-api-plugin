@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
@@ -28,8 +29,8 @@ import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import sun.security.util.DerValue;
-import sun.security.x509.X509Key;
+// import sun.security.util.DerValue;
+// import sun.security.x509.X509Key;
 
 /**
  * @author str4d
@@ -221,12 +222,23 @@ public class EdDSAEngineTest {
         for (Ed25519TestVectors.TestTuple testCase : Ed25519TestVectors.testCases) {
             EdDSAPublicKeySpec pubKey = new EdDSAPublicKeySpec(testCase.pk, spec);
             PublicKey vKey = new EdDSAPublicKey(pubKey);
-            PublicKey x509Key = X509Key.parse(new DerValue(vKey.getEncoded()));
+            // PublicKey x509Key = X509Key.parse(new DerValue(vKey.getEncoded()));
+            PublicKey x509Key = x509Parse(vKey.getEncoded());
             sgr.initVerify(x509Key);
 
             sgr.update(testCase.message);
 
             assertThat("Test case " + testCase.caseNum + " failed", sgr.verify(testCase.sig), is(true));
         }
+    }
+
+    private PublicKey x509Parse(byte[] derValue)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException,
+                    IllegalAccessException {
+        Class<?> cDerValue = Class.forName("sun.security.util.DerValue");
+        Class<?> cX509Key = Class.forName("sun.security.x509.X509Key");
+
+        Object oDerValue = cDerValue.getConstructor(byte[].class).newInstance((Object) derValue);
+        return (PublicKey) cX509Key.getDeclaredMethod("parse", cDerValue).invoke(null, oDerValue);
     }
 }
