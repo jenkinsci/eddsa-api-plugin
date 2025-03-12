@@ -13,5 +13,6 @@ Refer to our [contribution guidelines](https://github.com/jenkinsci/.github/blob
 
 ## LICENSE
 
-Licensed under MIT, see [LICENSE](LICENSE.md)
+Plugin Licensed under MIT, see [LICENSE](LICENSE.md)
 
+ed25519-java licensed under CC0 1.0 Universal, see [LICENSE](https://github.com/str4d/ed25519-java/blob/7c26a6312c2d2e887210930698706103e0f2da7d/LICENSE.txt)
