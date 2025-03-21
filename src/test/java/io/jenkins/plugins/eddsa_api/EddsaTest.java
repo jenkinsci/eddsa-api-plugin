@@ -1,6 +1,7 @@
 package io.jenkins.plugins.eddsa_api;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey;
 import com.cloudbees.plugins.credentials.CredentialsScope;
@@ -21,6 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.RealJenkinsRule;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 
@@ -37,19 +39,24 @@ public class EddsaTest implements Serializable {
     public static final String USER = "jenkins";
 
     @Rule
-    public transient GenericContainer agentContainer = new GenericContainer(new ImageFromDockerfile(
-                            SSH_AGENT_NAME, false)
-                    .withFileFromClasspath(
-                            SSH_AUTHORIZED_KEYS,
-                            AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_AUTHORIZED_KEYS)
-                    .withFileFromClasspath(
-                            SSH_KEY_PATH, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_KEY_PATH)
-                    .withFileFromClasspath(
-                            SSH_KEY_PUB_PATH, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_KEY_PUB_PATH)
-                    .withFileFromClasspath(
-                            SSH_SSHD_CONFIG, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_SSHD_CONFIG)
-                    .withFileFromClasspath(DOCKERFILE, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + DOCKERFILE))
-            .withExposedPorts(22);
+    public transient GenericContainer agentContainer = !DockerClientFactory.instance()
+                    .isDockerAvailable()
+            ? null
+            : new GenericContainer(new ImageFromDockerfile(SSH_AGENT_NAME, false)
+                            .withFileFromClasspath(
+                                    SSH_AUTHORIZED_KEYS,
+                                    AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_AUTHORIZED_KEYS)
+                            .withFileFromClasspath(
+                                    SSH_KEY_PATH, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_KEY_PATH)
+                            .withFileFromClasspath(
+                                    SSH_KEY_PUB_PATH,
+                                    AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_KEY_PUB_PATH)
+                            .withFileFromClasspath(
+                                    SSH_SSHD_CONFIG,
+                                    AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + SSH_SSHD_CONFIG)
+                            .withFileFromClasspath(
+                                    DOCKERFILE, AGENTS_RESOURCES_PATH + "/" + SSH_AGENT_NAME + "/" + DOCKERFILE))
+                    .withExposedPorts(22);
 
     @Rule(order = 10)
     public transient RealJenkinsRule j =
@@ -57,6 +64,7 @@ public class EddsaTest implements Serializable {
 
     @Test
     public void connectionTests() throws Throwable {
+        assumeTrue(DockerClientFactory.instance().isDockerAvailable());
         String host = agentContainer.getHost();
         int port = agentContainer.getMappedPort(SSH_PORT);
         String keyPath = SSH_AGENT_NAME + "/" + SSH_KEY_PATH;
