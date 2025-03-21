@@ -11,21 +11,23 @@
  */
 package net.i2p.crypto.eddsa.math.ed25519;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import net.i2p.crypto.eddsa.math.*;
-import org.hamcrest.core.IsEqual;
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests rely on the BigInteger class.
  */
-public class Ed25519LittleEndianEncodingTest {
+class Ed25519LittleEndianEncodingTest {
 
     private static final SecureRandom random = new SecureRandom();
 
     @Test
-    public void encodeReturnsCorrectByteArrayForSimpleFieldElements() {
+    void encodeReturnsCorrectByteArrayForSimpleFieldElements() {
         // Arrange:
         final int[] t1 = new int[10];
         final int[] t2 = new int[10];
@@ -38,12 +40,12 @@ public class Ed25519LittleEndianEncodingTest {
         final byte[] bytes2 = MathUtils.getField().getEncoding().encode(fieldElement2);
 
         // Assert:
-        Assert.assertThat(bytes1, IsEqual.equalTo(MathUtils.toByteArray(BigInteger.ZERO)));
-        Assert.assertThat(bytes2, IsEqual.equalTo(MathUtils.toByteArray(BigInteger.ONE)));
+        assertThat(bytes1, equalTo(MathUtils.toByteArray(BigInteger.ZERO)));
+        assertThat(bytes2, equalTo(MathUtils.toByteArray(BigInteger.ONE)));
     }
 
     @Test
-    public void encodeReturnsCorrectByteArray() {
+    void encodeReturnsCorrectByteArray() {
         for (int i = 0; i < 10000; i++) {
             // Arrange:
             final int[] t = new int[10];
@@ -57,12 +59,12 @@ public class Ed25519LittleEndianEncodingTest {
             final byte[] bytes = MathUtils.getField().getEncoding().encode(fieldElement1);
 
             // Assert:
-            Assert.assertThat(bytes, IsEqual.equalTo(MathUtils.toByteArray(b.mod(MathUtils.getQ()))));
+            assertThat(bytes, equalTo(MathUtils.toByteArray(b.mod(MathUtils.getQ()))));
         }
     }
 
     @Test
-    public void decodeReturnsCorrectFieldElementForSimpleByteArrays() {
+    void decodeReturnsCorrectFieldElementForSimpleByteArrays() {
         // Arrange:
         final byte[] bytes1 = new byte[32];
         final byte[] bytes2 = new byte[32];
@@ -77,12 +79,12 @@ public class Ed25519LittleEndianEncodingTest {
         final BigInteger b2 = MathUtils.toBigInteger(f2.t);
 
         // Assert:
-        Assert.assertThat(b1, IsEqual.equalTo(BigInteger.ZERO));
-        Assert.assertThat(b2, IsEqual.equalTo(BigInteger.ONE));
+        assertThat(b1, equalTo(BigInteger.ZERO));
+        assertThat(b2, equalTo(BigInteger.ONE));
     }
 
     @Test
-    public void decodeReturnsCorrectFieldElement() {
+    void decodeReturnsCorrectFieldElement() {
         for (int i = 0; i < 10000; i++) {
             // Arrange:
             final byte[] bytes = new byte[32];
@@ -96,12 +98,12 @@ public class Ed25519LittleEndianEncodingTest {
             final BigInteger b2 = MathUtils.toBigInteger(f.t).mod(MathUtils.getQ());
 
             // Assert:
-            Assert.assertThat(b2, IsEqual.equalTo(b1));
+            assertThat(b2, equalTo(b1));
         }
     }
 
     @Test
-    public void isNegativeReturnsCorrectResult() {
+    void isNegativeReturnsCorrectResult() {
         for (int i = 0; i < 10000; i++) {
             // Arrange:
             final int[] t = new int[10];
@@ -115,7 +117,7 @@ public class Ed25519LittleEndianEncodingTest {
             final FieldElement f = new Ed25519FieldElement(MathUtils.getField(), t);
 
             // Assert:
-            Assert.assertThat(MathUtils.getField().getEncoding().isNegative(f), IsEqual.equalTo(isNegative));
+            assertThat(MathUtils.getField().getEncoding().isNegative(f), equalTo(isNegative));
         }
     }
 }

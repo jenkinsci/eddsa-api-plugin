@@ -11,24 +11,23 @@
  */
 package net.i2p.crypto.eddsa.math;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on the tests in checkparams.py from the Python Ed25519 implementation.
  * @author str4d
  *
  */
-public class ConstantsTest {
+class ConstantsTest {
     static final EdDSANamedCurveSpec ed25519 = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519);
     static final Curve curve = ed25519.getCurve();
 
@@ -39,15 +38,13 @@ public class ConstantsTest {
     static final GroupElement P3_ZERO = GroupElement.p3(curve, ZERO, ONE, ONE, ZERO);
 
     @Test
-    public void testb() {
+    void testb() {
         int b = curve.getField().getb();
         assertThat(b, is(greaterThanOrEqualTo(10)));
-        try {
+        assertDoesNotThrow(() -> {
             MessageDigest h = MessageDigest.getInstance(ed25519.getHashAlgorithm());
             assertThat(8 * h.getDigestLength(), is(equalTo(2 * b)));
-        } catch (NoSuchAlgorithmException e) {
-            fail(e.getMessage());
-        }
+        });
     }
 
     /*@Test
@@ -80,7 +77,7 @@ public class ConstantsTest {
     }*/
 
     @Test
-    public void testB() {
+    void testB() {
         GroupElement B = ed25519.getB();
         assertThat(B.isOnCurve(curve), is(true));
         // assertThat(B.scalarMultiply(new BigIntegerLittleEndianEncoding().encode(ed25519.getL(),

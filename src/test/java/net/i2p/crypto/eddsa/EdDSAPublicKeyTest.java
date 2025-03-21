@@ -11,18 +11,18 @@
  */
 package net.i2p.crypto.eddsa;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import java.security.spec.X509EncodedKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class EdDSAPublicKeyTest {
+class EdDSAPublicKeyTest {
     /**
      * The example public key MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZuE=
      * from https://tools.ietf.org/html/draft-ietf-curdle-pkix-04#section-10.1
@@ -36,7 +36,7 @@ public class EdDSAPublicKeyTest {
             "302d300806032b65640a010103210019bf44096984cdfe8541bac167dc3b96c85086aa30b6b6cb0c5c38ad703166e1");
 
     @Test
-    public void testDecodeAndEncode() throws Exception {
+    void testDecodeAndEncode() throws Exception {
         // Decode
         X509EncodedKeySpec encoded = new X509EncodedKeySpec(TEST_PUBKEY);
         EdDSAPublicKey keyIn = new EdDSAPublicKey(encoded);
@@ -50,7 +50,7 @@ public class EdDSAPublicKeyTest {
     }
 
     @Test
-    public void testDecodeWithNullAndEncode() throws Exception {
+    void testDecodeWithNullAndEncode() throws Exception {
         // Decode
         X509EncodedKeySpec encoded = new X509EncodedKeySpec(TEST_PUBKEY_NULL_PARAMS);
         EdDSAPublicKey keyIn = new EdDSAPublicKey(encoded);
@@ -64,7 +64,7 @@ public class EdDSAPublicKeyTest {
     }
 
     @Test
-    public void testReEncodeOldEncoding() throws Exception {
+    void testReEncodeOldEncoding() throws Exception {
         // Decode
         X509EncodedKeySpec encoded = new X509EncodedKeySpec(TEST_PUBKEY_OLD);
         EdDSAPublicKey keyIn = new EdDSAPublicKey(encoded);

@@ -41,7 +41,7 @@ public class Ed25519TestVectors {
     public static Collection<TestTuple> testCases = getTestData("test.data");
 
     public static Collection<TestTuple> getTestData(String fileName) {
-        List<TestTuple> testCases = new ArrayList<TestTuple>();
+        List<TestTuple> testCases = new ArrayList<>();
         BufferedReader file = null;
         try {
             InputStream is = Ed25519TestVectors.class.getResourceAsStream(fileName);

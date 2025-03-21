@@ -11,15 +11,18 @@
  */
 package net.i2p.crypto.eddsa.math.ed25519;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.math.BigInteger;
 import net.i2p.crypto.eddsa.math.*;
-import org.hamcrest.core.*;
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests rely on the BigInteger class.
  */
-public class Ed25519FieldElementTest extends AbstractFieldElementTest {
+class Ed25519FieldElementTest extends AbstractFieldElementTest {
 
     protected FieldElement getRandomFieldElement() {
         return MathUtils.getRandomFieldElement();
@@ -40,21 +43,25 @@ public class Ed25519FieldElementTest extends AbstractFieldElementTest {
     // region constructor
 
     @Test
-    public void canConstructFieldElementFromArrayWithCorrectLength() {
+    void canConstructFieldElementFromArrayWithCorrectLength() {
         // Assert:
         new Ed25519FieldElement(MathUtils.getField(), new int[10]);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void cannotConstructFieldElementFromArrayWithIncorrectLength() {
-        // Assert:
-        new Ed25519FieldElement(MathUtils.getField(), new int[9]);
+    @Test
+    void cannotConstructFieldElementFromArrayWithIncorrectLength() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            // Assert:
+            new Ed25519FieldElement(MathUtils.getField(), new int[9]);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void cannotConstructFieldElementWithoutField() {
-        // Assert:
-        new Ed25519FieldElement(null, new int[9]);
+    @Test
+    void cannotConstructFieldElementWithoutField() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            // Assert:
+            new Ed25519FieldElement(null, new int[9]);
+        });
     }
 
     // endregion
@@ -76,7 +83,7 @@ public class Ed25519FieldElementTest extends AbstractFieldElementTest {
     // region toString
 
     @Test
-    public void toStringReturnsCorrectRepresentation() {
+    void toStringReturnsCorrectRepresentation() {
         // Arrange:
         final byte[] bytes = new byte[32];
         for (int i = 0; i < 32; i++) {
@@ -94,7 +101,7 @@ public class Ed25519FieldElementTest extends AbstractFieldElementTest {
         builder.append("]");
 
         // Assert:
-        Assert.assertThat(fAsString, IsEqual.equalTo(builder.toString()));
+        assertThat(fAsString, equalTo(builder.toString()));
     }
 
     // endregion

@@ -11,8 +11,8 @@
  */
 package net.i2p.crypto.eddsa.math.bigint;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import java.math.BigInteger;
 import java.util.Random;
@@ -21,13 +21,13 @@ import net.i2p.crypto.eddsa.math.AbstractFieldElementTest;
 import net.i2p.crypto.eddsa.math.Field;
 import net.i2p.crypto.eddsa.math.FieldElement;
 import net.i2p.crypto.eddsa.math.MathUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class BigIntegerFieldElementTest extends AbstractFieldElementTest {
+class BigIntegerFieldElementTest extends AbstractFieldElementTest {
     static final byte[] BYTES_ZERO =
             Utils.hexToBytes("0000000000000000000000000000000000000000000000000000000000000000");
     static final byte[] BYTES_ONE =
@@ -69,7 +69,7 @@ public class BigIntegerFieldElementTest extends AbstractFieldElementTest {
      * Test method for {@link BigIntegerFieldElement#BigIntegerFieldElement(Field, BigInteger)}.
      */
     @Test
-    public void testFieldElementBigInteger() {
+    void testFieldElementBigInteger() {
         assertThat(new BigIntegerFieldElement(ed25519Field, BigInteger.ZERO).bi, is(BigInteger.ZERO));
         assertThat(new BigIntegerFieldElement(ed25519Field, BigInteger.ONE).bi, is(BigInteger.ONE));
         assertThat(new BigIntegerFieldElement(ed25519Field, BigInteger.valueOf(2)).bi, is(BigInteger.valueOf(2)));
@@ -79,7 +79,7 @@ public class BigIntegerFieldElementTest extends AbstractFieldElementTest {
      * Test method for {@link FieldElement#toByteArray()}.
      */
     @Test
-    public void testToByteArray() {
+    void testToByteArray() {
         byte[] zero = ZERO.toByteArray();
         assertThat(zero.length, is(equalTo(BYTES_ZERO.length)));
         assertThat(zero, is(equalTo(BYTES_ZERO)));
@@ -109,7 +109,7 @@ public class BigIntegerFieldElementTest extends AbstractFieldElementTest {
      * Test method for {@link FieldElement#equals(Object)}.
      */
     @Test
-    public void testEqualsObject() {
+    void testEqualsObject() {
         assertThat(new BigIntegerFieldElement(ed25519Field, BigInteger.ZERO), is(equalTo(ZERO)));
         assertThat(
                 new BigIntegerFieldElement(ed25519Field, BigInteger.valueOf(1000)),

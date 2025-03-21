@@ -11,26 +11,23 @@
  */
 package net.i2p.crypto.eddsa;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.Signature;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class EdDSASecurityProviderTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
+class EdDSASecurityProviderTest {
 
     @Test
-    public void canGetInstancesWhenProviderIsPresent() throws Exception {
+    void canGetInstancesWhenProviderIsPresent() throws Exception {
         Security.addProvider(new EdDSASecurityProvider());
 
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EdDSA", "EdDSA");
@@ -41,8 +38,9 @@ public class EdDSASecurityProviderTest {
     }
 
     @Test
-    public void cannotGetInstancesWhenProviderIsNotPresent() throws Exception {
-        exception.expect(NoSuchProviderException.class);
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EdDSA", "EdDSA");
+    void cannotGetInstancesWhenProviderIsNotPresent() {
+        assertThrows(NoSuchProviderException.class, () -> {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EdDSA", "EdDSA");
+        });
     }
 }

@@ -11,18 +11,18 @@
  */
 package net.i2p.crypto.eddsa;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class EdDSAPrivateKeyTest {
+class EdDSAPrivateKeyTest {
     /**
      * The example private key MC4CAQAwBQYDK2VwBCIEINTuctv5E1hK1bbY8fdp+K06/nwoy/HU++CXqI9EdVhC
      * from https://tools.ietf.org/html/draft-ietf-curdle-pkix-04#section-10.3
@@ -36,7 +36,7 @@ public class EdDSAPrivateKeyTest {
             "302f020100300806032b65640a01010420d4ee72dbf913584ad5b6d8f1f769f8ad3afe7c28cbf1d4fbe097a88f44755842");
 
     @Test
-    public void testDecodeAndEncode() throws Exception {
+    void testDecodeAndEncode() throws Exception {
         // Decode
         PKCS8EncodedKeySpec encoded = new PKCS8EncodedKeySpec(TEST_PRIVKEY);
         EdDSAPrivateKey keyIn = new EdDSAPrivateKey(encoded);
@@ -51,7 +51,7 @@ public class EdDSAPrivateKeyTest {
     }
 
     @Test
-    public void testDecodeWithNullAndEncode() throws Exception {
+    void testDecodeWithNullAndEncode() throws Exception {
         // Decode
         PKCS8EncodedKeySpec encoded = new PKCS8EncodedKeySpec(TEST_PRIVKEY_NULL_PARAMS);
         EdDSAPrivateKey keyIn = new EdDSAPrivateKey(encoded);
@@ -66,7 +66,7 @@ public class EdDSAPrivateKeyTest {
     }
 
     @Test
-    public void testReEncodeOldEncoding() throws Exception {
+    void testReEncodeOldEncoding() throws Exception {
         // Decode
         PKCS8EncodedKeySpec encoded = new PKCS8EncodedKeySpec(TEST_PRIVKEY_OLD);
         EdDSAPrivateKey keyIn = new EdDSAPrivateKey(encoded);

@@ -11,19 +11,19 @@
  */
 package net.i2p.crypto.eddsa.spec;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.i2p.crypto.eddsa.Utils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class EdDSAPrivateKeySpecTest {
+class EdDSAPrivateKeySpecTest {
     static final byte[] ZERO_SEED =
             Utils.hexToBytes("0000000000000000000000000000000000000000000000000000000000000000");
     static final byte[] ZERO_H = Utils.hexToBytes(
@@ -32,14 +32,11 @@ public class EdDSAPrivateKeySpecTest {
 
     static final EdDSANamedCurveSpec ed25519 = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519);
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     /**
      * Test method for {@link EdDSAPrivateKeySpec#EdDSAPrivateKeySpec(byte[], EdDSAParameterSpec)}.
      */
     @Test
-    public void testEdDSAPrivateKeySpecFromSeed() {
+    void testEdDSAPrivateKeySpecFromSeed() {
         EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(ZERO_SEED, ed25519);
         assertThat(key.getSeed(), is(equalTo(ZERO_SEED)));
         assertThat(key.getH(), is(equalTo(ZERO_H)));
@@ -47,17 +44,17 @@ public class EdDSAPrivateKeySpecTest {
     }
 
     @Test
-    public void incorrectSeedLengthThrows() {
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("seed length is wrong");
-        EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(new byte[2], ed25519);
+    void incorrectSeedLengthThrows() {
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> new EdDSAPrivateKeySpec(new byte[2], ed25519));
+        assertTrue(exception.getMessage().contains("seed length is wrong"));
     }
 
     /**
      * Test method for {@link EdDSAPrivateKeySpec#EdDSAPrivateKeySpec(EdDSAParameterSpec, byte[])}.
      */
     @Test
-    public void testEdDSAPrivateKeySpecFromH() {
+    void testEdDSAPrivateKeySpecFromH() {
         EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(ed25519, ZERO_H);
         assertThat(key.getSeed(), is(nullValue()));
         assertThat(key.getH(), is(equalTo(ZERO_H)));
@@ -65,9 +62,9 @@ public class EdDSAPrivateKeySpecTest {
     }
 
     @Test
-    public void incorrectHashLengthThrows() {
-        exception.expect(IllegalArgumentException.class);
-        exception.expectMessage("hash length is wrong");
-        EdDSAPrivateKeySpec key = new EdDSAPrivateKeySpec(ed25519, new byte[2]);
+    void incorrectHashLengthThrows() {
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> new EdDSAPrivateKeySpec(ed25519, new byte[2]));
+        assertTrue(exception.getMessage().contains("hash length is wrong"));
     }
 }

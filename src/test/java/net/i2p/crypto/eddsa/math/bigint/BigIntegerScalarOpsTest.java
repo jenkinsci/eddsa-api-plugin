@@ -11,8 +11,8 @@
  */
 package net.i2p.crypto.eddsa.math.bigint;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
 
 import java.math.BigInteger;
 import net.i2p.crypto.eddsa.Utils;
@@ -20,13 +20,13 @@ import net.i2p.crypto.eddsa.math.Field;
 import net.i2p.crypto.eddsa.math.ScalarOps;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  *
  */
-public class BigIntegerScalarOpsTest {
+class BigIntegerScalarOpsTest {
 
     static final EdDSANamedCurveSpec ed25519 = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519);
     static final Field ed25519Field = ed25519.getCurve().getField();
@@ -35,7 +35,7 @@ public class BigIntegerScalarOpsTest {
      * Test method for {@link BigIntegerScalarOps#reduce(byte[])}.
      */
     @Test
-    public void testReduce() {
+    void testReduce() {
         ScalarOps sc = new BigIntegerScalarOps(ed25519Field, new BigInteger("5"));
         assertThat(
                 sc.reduce(new byte[] {7}),
@@ -56,7 +56,7 @@ public class BigIntegerScalarOpsTest {
      * Test method for {@link BigIntegerScalarOps#multiplyAndAdd(byte[], byte[], byte[])}.
      */
     @Test
-    public void testMultiplyAndAdd() {
+    void testMultiplyAndAdd() {
         ScalarOps sc = new BigIntegerScalarOps(ed25519Field, new BigInteger("5"));
         assertThat(
                 sc.multiplyAndAdd(new byte[] {7}, new byte[] {2}, new byte[] {5}),

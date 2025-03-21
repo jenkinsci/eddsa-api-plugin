@@ -25,14 +25,14 @@ public class FIPSComplianceCheckTest {
     }
 
     @Test
-    public void testStartupFips() throws Throwable {
+    public void testStartupFips() {
         rjr.javaOptions("-Xmx128M", "-Djenkins.security.FIPS140.COMPLIANCE=true");
-        JenkinsStartupException jse = assertThrows(JenkinsStartupException.class, () -> {
-            rjr.then(r -> {
-                Jenkins.get().getPluginManager().uberClassLoader.loadClass("net.i2p.crypto.eddsa.EdDSAEngine");
-                fail("should not get here!");
-            });
-        });
+        JenkinsStartupException jse = assertThrows(
+                JenkinsStartupException.class,
+                () -> rjr.then(r -> {
+                    Jenkins.get().getPluginManager().uberClassLoader.loadClass("net.i2p.crypto.eddsa.EdDSAEngine");
+                    fail("should not get here!");
+                }));
         assertThat(
                 jse.getMessage(),
                 containsString(

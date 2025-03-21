@@ -11,22 +11,21 @@
  */
 package net.i2p.crypto.eddsa.math.ed25519;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import java.math.BigInteger;
 import net.i2p.crypto.eddsa.Utils;
 import net.i2p.crypto.eddsa.math.*;
-import org.hamcrest.core.IsEqual;
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author str4d
  * Additional tests by the NEM project team.
  *
  */
-public class Ed25519ScalarOpsTest {
+class Ed25519ScalarOpsTest {
 
     private static final Ed25519ScalarOps scalarOps = new Ed25519ScalarOps();
 
@@ -34,7 +33,7 @@ public class Ed25519ScalarOpsTest {
      * Test method for {@link net.i2p.crypto.eddsa.math.bigint.BigIntegerScalarOps#reduce(byte[])}.
      */
     @Test
-    public void testReduce() {
+    void testReduce() {
         // Example from test case 1
         byte[] r = Utils.hexToBytes(
                 "b6b19cd8e0426f5983fa112d89a143aa97dab8bc5deb8d5b6253c928b65272f4044098c2a990039cde5b6a4818df0bfb6e40dc5dee54248032962323e701352d");
@@ -44,7 +43,7 @@ public class Ed25519ScalarOpsTest {
     }
 
     @Test
-    public void reduceReturnsExpectedResult() {
+    void reduceReturnsExpectedResult() {
         for (int i = 0; i < 1000; i++) {
             // Arrange:
             final byte[] bytes = MathUtils.getRandomByteArray(64);
@@ -54,10 +53,9 @@ public class Ed25519ScalarOpsTest {
             final byte[] reduced2 = MathUtils.reduceModGroupOrder(bytes);
 
             // Assert:
-            Assert.assertThat(
-                    MathUtils.toBigInteger(reduced1).compareTo(MathUtils.getGroupOrder()), IsEqual.equalTo(-1));
-            Assert.assertThat(MathUtils.toBigInteger(reduced1).compareTo(new BigInteger("-1")), IsEqual.equalTo(1));
-            Assert.assertThat(reduced1, IsEqual.equalTo(reduced2));
+            assertThat(MathUtils.toBigInteger(reduced1).compareTo(MathUtils.getGroupOrder()), equalTo(-1));
+            assertThat(MathUtils.toBigInteger(reduced1).compareTo(new BigInteger("-1")), equalTo(1));
+            assertThat(reduced1, equalTo(reduced2));
         }
     }
 
@@ -65,7 +63,7 @@ public class Ed25519ScalarOpsTest {
      * Test method for {@link net.i2p.crypto.eddsa.math.bigint.BigIntegerScalarOps#multiplyAndAdd(byte[], byte[], byte[])}.
      */
     @Test
-    public void testMultiplyAndAdd() {
+    void testMultiplyAndAdd() {
         // Example from test case 1
         byte[] h = Utils.hexToBytes("86eabc8e4c96193d290504e7c600df6cf8d8256131ec2c138a3e7e162e525404");
         byte[] a = Utils.hexToBytes("307c83864f2833cb427a2ef1c00a013cfdff2768d980c0a3a520f006904de94f");
@@ -75,7 +73,7 @@ public class Ed25519ScalarOpsTest {
     }
 
     @Test
-    public void multiplyAndAddReturnsExpectedResult() {
+    void multiplyAndAddReturnsExpectedResult() {
         for (int i = 0; i < 1000; i++) {
             // Arrange:
             final byte[] bytes1 = MathUtils.getRandomByteArray(32);
@@ -87,10 +85,9 @@ public class Ed25519ScalarOpsTest {
             final byte[] result2 = MathUtils.multiplyAndAddModGroupOrder(bytes1, bytes2, bytes3);
 
             // Assert:
-            Assert.assertThat(
-                    MathUtils.toBigInteger(result1).compareTo(MathUtils.getGroupOrder()), IsEqual.equalTo(-1));
-            Assert.assertThat(MathUtils.toBigInteger(result1).compareTo(new BigInteger("-1")), IsEqual.equalTo(1));
-            Assert.assertThat(result1, IsEqual.equalTo(result2));
+            assertThat(MathUtils.toBigInteger(result1).compareTo(MathUtils.getGroupOrder()), equalTo(-1));
+            assertThat(MathUtils.toBigInteger(result1).compareTo(new BigInteger("-1")), equalTo(1));
+            assertThat(result1, equalTo(result2));
         }
     }
 }

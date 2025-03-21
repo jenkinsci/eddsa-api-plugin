@@ -11,13 +11,15 @@
  */
 package net.i2p.crypto.eddsa.math;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import net.i2p.crypto.eddsa.Utils;
 import net.i2p.crypto.eddsa.math.ed25519.*;
 import net.i2p.crypto.eddsa.spec.*;
-import org.hamcrest.core.IsEqual;
-import org.junit.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Utility class to help with calculations.
@@ -279,79 +281,69 @@ public class MathUtils {
         final BigInteger gT = null == g.getT() ? null : toBigInteger(g.getT().toByteArray());
 
         // Switch to affine coordinates.
-        switch (g.getRepresentation()) {
-            case P2:
-            case P3:
-            case P3PrecomputedDouble:
+        y = switch (g.getRepresentation()) {
+            case P2, P3, P3PrecomputedDouble -> {
                 x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
-                y = gY.multiply(gZ.modInverse(getQ())).mod(getQ());
-                break;
-            case P1P1:
+                yield gY.multiply(gZ.modInverse(getQ())).mod(getQ());
+            }
+            case P1P1 -> {
                 x = gX.multiply(gZ.modInverse(getQ())).mod(getQ());
-                y = gY.multiply(gT.modInverse(getQ())).mod(getQ());
-                break;
-            case CACHED:
+                yield gY.multiply(gT.modInverse(getQ())).mod(getQ());
+            }
+            case CACHED -> {
                 x = gX.subtract(gY)
                         .multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ()))
                         .mod(getQ());
-                y = gX.add(gY)
+                yield gX.add(gY)
                         .multiply(gZ.multiply(new BigInteger("2")).modInverse(getQ()))
                         .mod(getQ());
-                break;
-            case PRECOMP:
+            }
+            case PRECOMP -> {
                 x = gX.subtract(gY)
                         .multiply(new BigInteger("2").modInverse(getQ()))
                         .mod(getQ());
-                y = gX.add(gY).multiply(new BigInteger("2").modInverse(getQ())).mod(getQ());
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
+                yield gX.add(gY)
+                        .multiply(new BigInteger("2").modInverse(getQ()))
+                        .mod(getQ());
+            }
+            default -> throw new UnsupportedOperationException();};
 
         // Now back to the desired representation.
-        switch (repr) {
-            case P2:
-                return GroupElement.p2(curve, toFieldElement(x), toFieldElement(y), getField().ONE);
-            case P3:
-                return GroupElement.p3(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE,
-                        toFieldElement(x.multiply(y).mod(getQ())),
-                        false);
-            case P3PrecomputedDouble:
-                return GroupElement.p3(
-                        curve,
-                        toFieldElement(x),
-                        toFieldElement(y),
-                        getField().ONE,
-                        toFieldElement(x.multiply(y).mod(getQ())),
-                        true);
-            case P1P1:
-                return GroupElement.p1p1(curve, toFieldElement(x), toFieldElement(y), getField().ONE, getField().ONE);
-            case CACHED:
-                return GroupElement.cached(
-                        curve,
-                        toFieldElement(y.add(x).mod(getQ())),
-                        toFieldElement(y.subtract(x).mod(getQ())),
-                        getField().ONE,
-                        toFieldElement(d.multiply(new BigInteger("2"))
-                                .multiply(x)
-                                .multiply(y)
-                                .mod(getQ())));
-            case PRECOMP:
-                return GroupElement.precomp(
-                        curve,
-                        toFieldElement(y.add(x).mod(getQ())),
-                        toFieldElement(y.subtract(x).mod(getQ())),
-                        toFieldElement(d.multiply(new BigInteger("2"))
-                                .multiply(x)
-                                .multiply(y)
-                                .mod(getQ())));
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return switch (repr) {
+            case P2 -> GroupElement.p2(curve, toFieldElement(x), toFieldElement(y), getField().ONE);
+            case P3 -> GroupElement.p3(
+                    curve,
+                    toFieldElement(x),
+                    toFieldElement(y),
+                    getField().ONE,
+                    toFieldElement(x.multiply(y).mod(getQ())),
+                    false);
+            case P3PrecomputedDouble -> GroupElement.p3(
+                    curve,
+                    toFieldElement(x),
+                    toFieldElement(y),
+                    getField().ONE,
+                    toFieldElement(x.multiply(y).mod(getQ())),
+                    true);
+            case P1P1 -> GroupElement.p1p1(curve, toFieldElement(x), toFieldElement(y), getField().ONE, getField().ONE);
+            case CACHED -> GroupElement.cached(
+                    curve,
+                    toFieldElement(y.add(x).mod(getQ())),
+                    toFieldElement(y.subtract(x).mod(getQ())),
+                    getField().ONE,
+                    toFieldElement(d.multiply(new BigInteger("2"))
+                            .multiply(x)
+                            .multiply(y)
+                            .mod(getQ())));
+            case PRECOMP -> GroupElement.precomp(
+                    curve,
+                    toFieldElement(y.add(x).mod(getQ())),
+                    toFieldElement(y.subtract(x).mod(getQ())),
+                    toFieldElement(d.multiply(new BigInteger("2"))
+                            .multiply(x)
+                            .multiply(y)
+                            .mod(getQ())));
+        };
     }
 
     /**
@@ -474,7 +466,7 @@ public class MathUtils {
 
     // Start TODO BR: Remove when finished!
     @Test
-    public void mathUtilsWorkAsExpected() {
+    void mathUtilsWorkAsExpected() {
         final GroupElement neutral = GroupElement.p3(
                 curve, curve.getField().ZERO, curve.getField().ONE, curve.getField().ONE, curve.getField().ZERO);
         for (int i = 0; i < 1000; i++) {
@@ -485,8 +477,8 @@ public class MathUtils {
             final GroupElement h2 = addGroupElements(neutral, g);
 
             // Assert:
-            Assert.assertThat(g, IsEqual.equalTo(h1));
-            Assert.assertThat(g, IsEqual.equalTo(h2));
+            assertThat(g, equalTo(h1));
+            assertThat(g, equalTo(h2));
         }
 
         for (int i = 0; i < 1000; i++) {
@@ -494,24 +486,24 @@ public class MathUtils {
 
             // P3 -> P2.
             GroupElement h = toRepresentation(g, GroupElement.Representation.P2);
-            Assert.assertThat(h, IsEqual.equalTo(g));
+            assertThat(h, equalTo(g));
             // P3 -> P1P1.
             h = toRepresentation(g, GroupElement.Representation.P1P1);
-            Assert.assertThat(g, IsEqual.equalTo(h));
+            assertThat(g, equalTo(h));
 
             // P3 -> CACHED.
             h = toRepresentation(g, GroupElement.Representation.CACHED);
-            Assert.assertThat(h, IsEqual.equalTo(g));
+            assertThat(h, equalTo(g));
 
             // P3 -> P2 -> P3.
             g = toRepresentation(g, GroupElement.Representation.P2);
             h = toRepresentation(g, GroupElement.Representation.P3);
-            Assert.assertThat(g, IsEqual.equalTo(h));
+            assertThat(g, equalTo(h));
 
             // P3 -> P2 -> P1P1.
             g = toRepresentation(g, GroupElement.Representation.P2);
             h = toRepresentation(g, GroupElement.Representation.P1P1);
-            Assert.assertThat(g, IsEqual.equalTo(h));
+            assertThat(g, equalTo(h));
         }
 
         for (int i = 0; i < 10; i++) {
@@ -522,7 +514,7 @@ public class MathUtils {
             final GroupElement h = MathUtils.scalarMultiplyGroupElement(g, curve.getField().ZERO);
 
             // Assert:
-            Assert.assertThat(curve.getZero(GroupElement.Representation.P3), IsEqual.equalTo(h));
+            assertThat(curve.getZero(GroupElement.Representation.P3), equalTo(h));
         }
     }
     // End TODO BR: Remove when finished!
